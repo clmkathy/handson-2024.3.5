@@ -35,8 +35,10 @@ pipeline {
 
   post {
     always{
-      echo "delete image"
-      sh "docker rmi clmkathy/my_ttt:v1"
+      //  echo "delete image"
+      // sh "docker rmi clmkathy/my_ttt:v1"
+      echo "clean the workspace whatever"
+      cleanWs()
     }
     failure {
          echo "这个阶段 完蛋了.... $currentBuild.result"
