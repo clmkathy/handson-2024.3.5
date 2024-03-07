@@ -2,35 +2,42 @@ pipeline {
   agent any
 
   stages {
-    stage('docker login & pull') {
+    stage ('Build Image') {
+      steps {
+        sh """
+          docker build -t clmkathy/my_ttt:v1 .
+          docker images
+        """
+      }
+    }
+    stage('docker login & push') {
        steps{
          withCredentials([usernamePassword(credentialsId: 'dockerhub_creds', passwordVariable: 'PWD', usernameVariable: 'USR')]){
          sh """
           docker login -u $USR -p $PWD
+          docker push clmkathy/my_ttt:v1
        """
        } 
-        sh "docker pull clmkathy/my_ttt:1.0"
-        sh "docker images"
-    
+
        }     
     }
 
     stage('run container&deploy') {
       steps {
         sh 'docker ps -q -a --filter "name=me_tic_tac_toe" | xargs -r docker rm -f'
-        sh "docker run -d -p 8090:3000 --name me_tic_tac_toe clmkathy/my_ttt:1.0"
+        sh "docker run -d -p 8090:3000 --name me_tic_tac_toe clmkathy/my_ttt:v1"
         sh "docker ps -a"
-        sh "docker rmi clmkathy/my_ttt:1.0"
+        
         sh "docker images"
       }
     }
   }
 
   post {
-    // stage ('delete'){
-      // echo 'delete image'
-      // sh "docker rm -f clmkathy/my_ttt:1.0"
-    // }
+    always{
+      echo "delete image"
+      sh "docker rmi clmkathy/my_ttt:v1"
+    }
     failure {
          echo "这个阶段 完蛋了.... $currentBuild.result"
       }
