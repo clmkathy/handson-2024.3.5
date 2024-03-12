@@ -5,7 +5,7 @@ pipeline {
     stage ('Build Image') {
       steps {
         sh """
-          docker build -t clmkathy/my_ttt:v1 .
+          docker build -t clmkathy/my_ttt:$BUILD_NUMBER .
           docker tag clmkathy/my_ttt:v1 clmkathy/my_ttt:$BUILD_NUMBER
           docker images
         """
