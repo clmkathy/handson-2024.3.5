@@ -35,7 +35,7 @@ pipeline {
 
   post {
     always{
-      //  echo "delete image"
+       echo "image:$BUILD_NUMBER"
       // sh "docker rmi clmkathy/my_ttt:v1"
       echo "clean the workspace whatever"
       cleanWs()
